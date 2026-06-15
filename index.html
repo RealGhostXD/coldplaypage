@@ -20,7 +20,6 @@
             min-height: 100vh;
         }
 
-        /* Top Header Area (to push text down nicely) */
         .content-wrapper {
             padding: 40px 20px;
             max-width: 600px;
@@ -40,7 +39,7 @@
             margin-bottom: 40px;
         }
 
-        /* Discord Button Styles */
+        /* Discord Button */
         .discord-btn {
             position: absolute;
             top: 20px;
@@ -66,7 +65,7 @@
             box-shadow: 0 6px 20px rgba(88, 101, 242, 0.4);
         }
 
-        /* Souvenir Audio Card GUI */
+        /* Custom Audio Player Card GUI */
         .player-card {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(66, 133, 244, 0.15);
@@ -74,28 +73,92 @@
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             margin-top: 20px;
+            backdrop-filter: blur(10px);
         }
 
         .player-card h2 {
-            font-size: 1rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 2px;
-            color: #a642f4; /* Subtle purple accent */
-            margin-bottom: 5px;
+            color: #a642f4; 
+            margin-bottom: 8px;
         }
 
         .track-title {
             color: #ffffff;
             font-size: 1.3rem;
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
-        /* Customizing the native audio browser bar to look cleaner */
-        audio {
+        /* The Custom Player Layout */
+        .custom-player {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
             width: 100%;
-            outline: none;
-            border-radius: 30px;
+            justify-content: center;
+        }
+
+        .play-pause-btn {
+            background: linear-gradient(135deg, #4285f4 0%, #a642f4 100%);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3);
+        }
+
+        .play-pause-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(66, 133, 244, 0.5);
+        }
+
+        /* Custom Progress Bar Timeline */
+        .timeline-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .time-display {
+            font-size: 0.85rem;
+            color: #8fa0dd;
+            min-width: 35px;
+        }
+
+        .progress-bar-wrapper {
+            flex-grow: 1;
+            background: rgba(255, 255, 255, 0.1);
+            height: 6px;
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #4285f4, #a642f4);
+            height: 100%;
+            width: 0%;
+            border-radius: 3px;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
     </style>
 </head>
@@ -113,9 +176,80 @@
             <h2>While you wait, have a souvenir</h2>
             <div class="track-title">Famous old painters leaked instrumental</div>
             
-            <audio controls src="./famous_old_painters.flac"></audio>
+            <div class="custom-player">
+                <audio id="audio-track" src="./famous_old_painters.mp3"></audio>
+
+                <div class="player-controls">
+                    <button class="play-pause-btn" id="play-btn">
+                        <i class="fas fa-play" id="play-icon"></i>
+                    </button>
+                </div>
+
+                <div class="timeline-container">
+                    <span class="time-display" id="current-time">0:00</span>
+                    <div class="progress-bar-wrapper" id="progress-wrapper">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <span class="time-display" id="total-duration">0:00</span>
+                </div>
+            </div>
         </div>
     </div>
+
+    <script>
+        const audio = document.getElementById('audio-track');
+        const playBtn = document.getElementById('play-btn');
+        const playIcon = document.getElementById('play-icon');
+        const progressFill = document.getElementById('progress-fill');
+        const progressWrapper = document.getElementById('progress-wrapper');
+        const currentTimeDisplay = document.getElementById('current-time');
+        const totalDurationDisplay = document.getElementById('total-duration');
+
+        // Play and Pause logic
+        playBtn.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+                playIcon.className = 'fas fa-pause';
+            } else {
+                audio.pause();
+                playIcon.className = 'fas fa-play';
+            }
+        });
+
+        // Update progress bar and timers
+        audio.addEventListener('timeupdate', () => {
+            const percentage = (audio.currentTime / audio.duration) * 100;
+            progressFill.style.width = `${percentage}%`;
+            
+            // Format minutes and seconds
+            let currentMin = Math.floor(audio.currentTime / 60);
+            let currentSec = Math.floor(audio.currentTime % 60);
+            if (currentSec < 10) currentSec = `0${currentSec}`;
+            currentTimeDisplay.innerText = `${currentMin}:${currentSec}`;
+        });
+
+        // Calculate total track duration once file loads
+        audio.addEventListener('loadedmetadata', () => {
+            let totalMin = Math.floor(audio.duration / 60);
+            let totalSec = Math.floor(audio.duration % 60);
+            if (totalSec < 10) totalSec = `0${totalSec}`;
+            totalDurationDisplay.innerText = `${totalMin}:${totalSec}`;
+        });
+
+        // Click anywhere on the bar to skip/seek through the song
+        progressWrapper.addEventListener('click', (e) => {
+            const width = progressWrapper.clientWidth;
+            const clickX = e.offsetX;
+            const duration = audio.duration;
+            audio.currentTime = (clickX / width) * duration;
+        });
+
+        // Reset button when track ends
+        audio.addEventListener('ended', () => {
+            playIcon.className = 'fas fa-play';
+            progressFill.style.width = '0%';
+        });
+    </script>
 
 </body>
 </html>
