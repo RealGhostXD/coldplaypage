@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,38 +9,93 @@
         body { 
             background-color: #0c1020; 
             color: white; 
-            font-family: sans-serif; 
+            font-family: system-ui, -apple-system, sans-serif; 
             text-align: center; 
-            padding-top: 100px; 
             margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-        h1 { color: #4285f4; }
 
-        /* Estilos para el botón de Discord */
+        /* Top Header Area (to push text down nicely) */
+        .content-wrapper {
+            padding: 40px 20px;
+            max-width: 600px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        h1 { 
+            color: #4285f4; 
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #8fa0dd;
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+
+        /* Discord Button Styles */
         .discord-btn {
             position: absolute;
             top: 20px;
             right: 20px;
-            background-color: #5865F2; /* Color oficial Blurple de Discord */
+            background-color: #5865F2; 
             color: white;
-            text-decoration: none; /* Le quita la línea fea de los links */
+            text-decoration: none; 
             padding: 10px 18px;
             border-radius: 8px;
             font-weight: bold;
             font-size: 0.9rem;
             display: flex;
             align-items: center;
-            gap: 8px; /* Separación entre el logo y el texto */
+            gap: 8px; 
             opacity: 0.85;
-            transition: all 0.3s ease; /* Hace que el cambio de color sea suave */
+            transition: all 0.3s ease; 
             box-shadow: 0 4px 15px rgba(88, 101, 242, 0.2);
         }
 
-        /* Lo que pasa cuando pasas el mouse por encima */
         .discord-btn:hover {
             opacity: 1;
-            transform: translateY(-2px); /* Flota un poquito hacia arriba */
+            transform: translateY(-2px); 
             box-shadow: 0 6px 20px rgba(88, 101, 242, 0.4);
+        }
+
+        /* Souvenir Audio Card GUI */
+        .player-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(66, 133, 244, 0.15);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin-top: 20px;
+        }
+
+        .player-card h2 {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #a642f4; /* Subtle purple accent */
+            margin-bottom: 5px;
+        }
+
+        .track-title {
+            color: #ffffff;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        /* Customizing the native audio browser bar to look cleaner */
+        audio {
+            width: 100%;
+            outline: none;
+            border-radius: 30px;
         }
     </style>
 </head>
@@ -50,8 +105,17 @@
         <i class="fa-brands fa-discord"></i> Discord
     </a>
 
-    <h1>Welcome to Viva Coldplay Peak</h1>
-    <p>Sitio en construcción. ¡In My Place, In My Place...!</p>
+    <div class="content-wrapper">
+        <h1>Welcome to Viva Coldplay Peak</h1>
+        <p class="subtitle">Under construction. In My Place, In My Place...!</p>
+
+        <div class="player-card">
+            <h2>While you wait, have a souvenir</h2>
+            <div class="track-title">Famous old painters leaked instrumental</div>
+            
+            <audio controls src="./famous_old_painters.flac"></audio>
+        </div>
+    </div>
 
 </body>
 </html>
